@@ -470,7 +470,9 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
     floatval_t max_score, score, *cur = NULL;
     int argmax_score;
     const floatval_t *prev = NULL, *state = NULL, *trans = NULL;
+    // The number of items (T) in the instance.
     const int T = ctx->num_items;
+    // The total number of distinct labels (L).
     const int L = ctx->num_labels;
 
     /*
@@ -509,7 +511,10 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
             /* Backward link (#t, #j) -> (#t-1, #i). */
             if (argmax_score >= 0) back[j] = argmax_score;
             /* Add the state score on (t, j). */
-            cur[j] = max_score + state[j];
+            if (j != 0)
+                cur[j] = max_score + state[j];
+            else
+                cur[j] = max_score + state[j] - 100;
         }
     }
 
