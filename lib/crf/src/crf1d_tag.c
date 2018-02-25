@@ -214,6 +214,8 @@ static int tagger_viterbi(crfsuite_tagger_t* tagger, int *labels, floatval_t *pt
     floatval_t score;
     crf1dt_t* crf1dt = (crf1dt_t*)tagger->internal;
     crf1d_context_t* ctx = crf1dt->ctx;
+    
+    // debug: call crf1dc_viterbi function here
 
     score = crf1dc_viterbi(ctx, labels);
     if (ptr_score != NULL) {
@@ -259,7 +261,15 @@ static int tagger_marginal_path(crfsuite_tagger_t *tagger, const int *path, int 
     return 0;
 }
 
+static int tagger_add_label_dict(crfsuite_tagger_t *tagger, const crfsuite_dictionary_t *labels)
+{
+    // Add label dictionary into crf1d_context_t
+    // A label dictionary can convert label into its corresponding index
+    crf1dt_t* crf1dt = (crf1dt_t*)tagger->internal;
+    crf1dt->ctx->label_dict = labels;
 
+    return 0;
+}
 
 /*
  *    Implementation of crfsuite_dictionary_t object for attributes.
@@ -423,6 +433,7 @@ static int model_get_tagger(crfsuite_model_t* model, crfsuite_tagger_t** ptr_tag
     tagger->lognorm = tagger_lognorm;
     tagger->marginal_point = tagger_marginal_point;
     tagger->marginal_path = tagger_marginal_path;
+    tagger->add_label_dict = tagger_add_label_dict;
 
     *ptr_tagger = tagger;
     return 0;

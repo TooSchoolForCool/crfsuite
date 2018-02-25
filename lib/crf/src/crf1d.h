@@ -175,6 +175,11 @@ typedef struct {
      */
     floatval_t *mexp_trans;
 
+    /**
+     * label index reference
+     */
+    crfsuite_dictionary_t *label_dict;
+
 } crf1d_context_t;
 
 #define    MATRIX(p, xl, x, y)        ((p)[(xl) * (y) + (x)])

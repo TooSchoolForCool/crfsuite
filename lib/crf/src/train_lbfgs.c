@@ -238,7 +238,7 @@ int crfsuite_train_lbfgs(
                             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
                             "60", "61", "62"};
     for(int i = 0; i < 63; i++)
-        printf("debug label %d = %d\n", i, trainset->data->labels->get(trainset->data->labels, arr[i]));
+        printf("debug label %s -> lid %d\n", arr[i], trainset->data->labels->to_id(trainset->data->labels, arr[i]));
 
     const int A =  trainset->data->attrs->num(trainset->data->attrs);
     const int K = gm->num_features;

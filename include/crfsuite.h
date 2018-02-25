@@ -488,6 +488,15 @@ struct tag_crfsuite_tagger {
      *  @return int         The status code.
      */
     int (*marginal_path)(crfsuite_tagger_t *tagger, const int *path, int begin, int end, floatval_t *ptr_prob);
+
+    /**
+     * Compute the marginal probability of a partial label sequence.
+     *  @param  tagger      The pointer to this tagger instance.
+     *  @param  labels      Label dictionary, convert label into corresponding index
+     *
+     *  @return int         The status code.
+     */
+    int (*add_label_dict)(crfsuite_tagger_t *tagger, const crfsuite_dictionary_t *labels);
 };
 
 /**

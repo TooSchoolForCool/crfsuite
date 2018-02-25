@@ -475,6 +475,14 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
     // The total number of distinct labels (L).
     const int L = ctx->num_labels;
 
+    // ponential score decrease ratio
+    const float OFFSET_RATIO = 0.5;
+    // add offset target index
+    // int OFFSET_TARGET = 0;
+    int OFFSET_TARGET = ctx->label_dict->to_id(ctx->label_dict, "0");
+
+    printf("debug OFFSET_TARGET = %d\n", OFFSET_TARGET);
+
     /*
         This function assumes state and trans scores to be in the logarithm domain.
      */
@@ -483,7 +491,10 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
     cur = ALPHA_SCORE(ctx, 0);
     state = STATE_SCORE(ctx, 0);
     for (j = 0;j < L;++j) {
-        cur[j] = state[j];
+        if (j == OFFSET_TARGET)
+            cur[j] = state[j] * OFFSET_RATIO;
+        else
+            cur[j] = state[j];
     }
 
     /* Compute the scores at (t, *). */
@@ -511,10 +522,10 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
             /* Backward link (#t, #j) -> (#t-1, #i). */
             if (argmax_score >= 0) back[j] = argmax_score;
             /* Add the state score on (t, j). */
-            if (j != 0)
-                cur[j] = max_score + state[j];
+            if (j == 0)
+                cur[j] = max_score + state[j] * OFFSET_RATIO;
             else
-                cur[j] = max_score + state[j] - 100;
+                cur[j] = max_score + state[j];
         }
     }
 

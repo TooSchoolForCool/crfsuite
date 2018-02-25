@@ -432,6 +432,9 @@ StringList Tagger::viterbi()
         throw std::runtime_error("Failed to obtain the dictionary interface for labels");
     }
 
+    // add label dictionary into crf1d_context_t
+    tagger->add_label_dict(tagger, labels);
+
     // Run the Viterbi algorithm.
     floatval_t score;
     int *path = new int[T];
