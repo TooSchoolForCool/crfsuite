@@ -476,7 +476,8 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
     const int L = ctx->num_labels;
 
     // ponential score decrease ratio
-    const float OFFSET_BIAS = -0.5;
+    const float OFFSET_BIAS = 0;
+    const float OFFSET_RATIO = 1;
     // add offset target index
     // int OFFSET_TARGET = 0;
     int OFFSET_TARGET = ctx->label_dict->to_id(ctx->label_dict, "0");
@@ -511,7 +512,11 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
             for (i = 0;i < L;++i) {
                 /* Transit from (t-1, i) to (t, j). */
                 trans = TRANS_SCORE(ctx, i);
-                score = prev[i] + trans[j];
+
+                if (j == OFFSET_TARGET)
+                    score = prev[i] + trans[j] + OFFSET_BIAS;
+                else
+                    score = prev[i] + trans[j];
 
                 /* Store this path if it has the maximum score. */
                 if (max_score < score) {
@@ -523,7 +528,7 @@ floatval_t crf1dc_viterbi(crf1d_context_t* ctx, int *labels)
             if (argmax_score >= 0) back[j] = argmax_score;
             /* Add the state score on (t, j). */
             if (j == OFFSET_TARGET)
-                cur[j] = max_score + state[j] + OFFSET_BIAS;
+                cur[j] = max_score + state[j];
             else
                 cur[j] = max_score + state[j];
         }
